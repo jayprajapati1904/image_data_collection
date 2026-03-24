@@ -16,97 +16,121 @@ from dotenv import load_dotenv
 # --- LOAD SECRETS LOCALLY ---
 load_dotenv()
 
+
+def load_animals_from_gist():
+    url = "https://gist.githubusercontent.com/EyeOfMidas/311e77b8b8c2f334fc8bdaf652c1f47f/raw"
+
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise Exception("❌ Failed to load animal list from gist")
+
+    # Clean and split lines
+    animals = [
+        line.strip().lower()
+        for line in response.text.split("\n")
+        if line.strip()
+    ]
+
+    print(f"✅ Loaded {len(animals)} animals from gist")
+
+    return animals
+
+
 # --- CONFIGURATION ---
 IMAGES_PER_DAY = 5
-ANIMALS = [
-    # Domestic Pets
-    "dog", "cat", "rabbit", "hamster", "guinea pig", "ferret", "mouse", "rat", "gerbil", "chinchilla",
-    "hedgehog", "sugar glider", "turtle", "tortoise", "parrot", "budgie", "cockatiel", "canary", "goldfish", "betta fish",
+# ANIMALS = [
+#     # Domestic Pets
+#     "dog", "cat", "rabbit", "hamster", "guinea pig", "ferret", "mouse", "rat", "gerbil", "chinchilla",
+#     "hedgehog", "sugar glider", "turtle", "tortoise", "parrot", "budgie", "cockatiel", "canary", "goldfish", "betta fish",
 
-    # Farm Animals
-    "chicken", "cow", "pig", "sheep", "goat", "horse", "donkey", "duck", "goose", "turkey", "llama", "alpaca", "buffalo", "ox",
+#     # Farm Animals
+#     "chicken", "cow", "pig", "sheep", "goat", "horse", "donkey", "duck", "goose", "turkey", "llama", "alpaca", "buffalo", "ox",
 
-    # Wild Mammals
-    "lion", "tiger", "elephant", "giraffe", "zebra", "bear", "wolf", "fox", "deer", "moose", "kangaroo", "koala", "panda",
-    "cheetah", "leopard", "jaguar", "rhinoceros", "hippopotamus", "gorilla", "chimpanzee", "monkey", "squirrel", "raccoon",
-    "skunk", "bat", "otter", "beaver", "badger", "weasel", "coyote", "bobcat", "lynx", "walrus", "seal", "whale", "dolphin",
+#     # Wild Mammals
+#     "lion", "tiger", "elephant", "giraffe", "zebra", "bear", "wolf", "fox", "deer", "moose", "kangaroo", "koala", "panda",
+#     "cheetah", "leopard", "jaguar", "rhinoceros", "hippopotamus", "gorilla", "chimpanzee", "monkey", "squirrel", "raccoon",
+#     "skunk", "bat", "otter", "beaver", "badger", "weasel", "coyote", "bobcat", "lynx", "walrus", "seal", "whale", "dolphin",
 
-    # Birds
-    "eagle", "hawk", "owl", "sparrow", "robin", "cardinal", "blue jay", "crow", "raven", "pigeon", "dove", "peacock",
-    "flamingo", "penguin", "ostrich", "emu", "hummingbird", "woodpecker", "seagull", "swan",
+#     # Birds
+#     "eagle", "hawk", "owl", "sparrow", "robin", "cardinal", "blue jay", "crow", "raven", "pigeon", "dove", "peacock",
+#     "flamingo", "penguin", "ostrich", "emu", "hummingbird", "woodpecker", "seagull", "swan",
 
-    # Reptiles & Amphibians
-    "snake", "lizard", "crocodile", "alligator", "frog", "toad", "salamander", "iguana", "chameleon", "gecko",
+#     # Reptiles & Amphibians
+#     "snake", "lizard", "crocodile", "alligator", "frog", "toad", "salamander", "iguana", "chameleon", "gecko",
 
-    # Aquatic Animals
-    "shark", "octopus", "squid", "jellyfish", "starfish", "seahorse", "crab", "lobster", "shrimp", "clownfish",
+#     # Aquatic Animals
+#     "shark", "octopus", "squid", "jellyfish", "starfish", "seahorse", "crab", "lobster", "shrimp", "clownfish",
 
-    # Insects & Arachnids
-    "butterfly", "bee", "ant", "spider", "ladybug", "grasshopper", "cricket", "dragonfly", "moth", "beetle"
-]  # Add your full list back here
+#     # Insects & Arachnids
+#     "butterfly", "bee", "ant", "spider", "ladybug", "grasshopper", "cricket", "dragonfly", "moth", "beetle"
+# ]  # Add your full list back here
+
+ANIMALS = load_animals_from_gist()
+
 
 # --- EMAIL STYLES (CSS) ---
 # We use this CSS to make the emails look professional and clean.
-# HTML_STYLE = """
-# <style>
-#     body { font-family: 'Helvetica', 'Arial', sans-serif; background-color: #f4f4f4; padding: 20px; }
-#     .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-#     .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eeeeee; }
-#     .header h1 { margin: 0; font-size: 24px; }
-#     .content { padding: 20px 0; color: #333333; line-height: 1.6; }
-#     .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-#     .stats-table td { padding: 10px; border-bottom: 1px solid #eeeeee; }
-#     .stats-table td:first-child { font-weight: bold; color: #555555; width: 40%; }
-#     .footer { text-align: center; font-size: 12px; color: #999999; margin-top: 30px; }
-#     .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; }
-#     .bg-blue { background-color: #3498db; }
-#     .bg-green { background-color: #2ecc71; }
-#     .bg-red { background-color: #e74c3c; }
-# </style>
-# """
+HTML_STYLE = """
+<style>
+    body { font-family: 'Helvetica', 'Arial', sans-serif; background-color: #f4f4f4; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eeeeee; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 20px 0; color: #333333; line-height: 1.6; }
+    .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    .stats-table td { padding: 10px; border-bottom: 1px solid #eeeeee; }
+    .stats-table td:first-child { font-weight: bold; color: #555555; width: 40%; }
+    .footer { text-align: center; font-size: 12px; color: #999999; margin-top: 30px; }
+    .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 14px; }
+    .bg-blue { background-color: #3498db; }
+    .bg-green { background-color: #2ecc71; }
+    .bg-red { background-color: #e74c3c; }
+</style>
+"""
 
 
-# def send_html_email(subject, html_content):
-#     """Sends a beautifully formatted HTML email."""
-#     sender_email = os.environ.get("EMAIL_SENDER")
-#     sender_password = os.environ.get("EMAIL_PASSWORD")
-#     receiver_email = os.environ.get("EMAIL_RECEIVER")
+def send_html_email(subject, html_content):
+    """Sends a beautifully formatted HTML email."""
+    sender_email = os.environ.get("EMAIL_SENDER")
+    sender_password = os.environ.get("EMAIL_PASSWORD")
+    receiver_email = os.environ.get("EMAIL_RECEIVER")
 
-#     if not sender_email or not sender_password:
-#         print("⚠️ Email secrets missing. Skipping email.")
-#         return
+    if not sender_email or not sender_password:
+        print("⚠️ Email secrets missing. Skipping email.")
+        return
 
-#     try:
-#         msg = MIMEMultipart()
-#         msg['From'] = f"Daily Zoo Bot <{sender_email}>"
-#         msg['To'] = receiver_email
-#         msg['Subject'] = subject
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"Daily Zoo Bot <{sender_email}>"
+        msg['To'] = receiver_email
+        msg['Subject'] = subject
 
-#         # Attach HTML Body
-#         full_html = f"""
-#         <html>
-#         <head>{HTML_STYLE}</head>
-#         <body>
-#             <div class="container">
-#                 {html_content}
-#                 <div class="footer">
-#                     Sent automatically by your Daily Zoo Python Script 🐍
-#                 </div>
-#             </div>
-#         </body>
-#         </html>
-#         """
-#         msg.attach(MIMEText(full_html, 'html'))
+        # Attach HTML Body
+        full_html = f"""
+        <html>
+        <head>{HTML_STYLE}</head>
+        <body>
+            <div class="container">
+                {html_content}
+                <div class="footer">
+                    Sent automatically by your Daily Zoo Python Script 🐍
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(full_html, 'html'))
 
-#         # Connect to Gmail
-#         server = smtplib.SMTP('smtp.gmail.com', 587)
-#         server.starttls()
-#         server.login(sender_email, sender_password)
-#         server.sendmail(sender_email, receiver_email, msg.as_string())
-#         server.quit()
-#         print(f"📧 HTML Email sent: {subject}")
-#     except Exception as e:
-#         print(f"❌ Failed to send email: {e}")
+        # Connect to Gmail
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.quit()
+        print(f"📧 HTML Email sent: {subject}")
+    except Exception as e:
+        print(f"❌ Failed to send email: {e}")
 
 
 def authenticate_drive():
@@ -157,6 +181,9 @@ def get_or_create_subfolder(service, folder_name, parent_id):
 
 
 def main():
+    print("\n🚀 JOB STARTED\n")
+
+    ANIMALS = load_animals_from_gist()   # 👈 ADD HERE
     start_time = datetime.datetime.now()
     today_str = str(datetime.date.today())
 
@@ -176,7 +203,7 @@ def main():
         <p>You will receive another email when the job is complete.</p>
     </div>
     """
-    # send_html_email(f"🚀 Job Started: {today_str}", start_html)
+    send_html_email(f"🚀 Job Started: {today_str}", start_html)
 
     total_uploaded = 0
     errors_log = []
@@ -294,9 +321,9 @@ def main():
             </p>
         </div>
         """
-        # send_html_email(
-        #     f"✅ Job Success: {total_uploaded} New Images", success_html)
-        # print("\n🎉 JOB COMPLETE!")
+        send_html_email(
+            f"✅ Job Success: {total_uploaded} New Images", success_html)
+        print("\n🎉 JOB COMPLETE!")
 
     except Exception as main_error:
         # 3. SEND FAILURE EMAIL (Beautiful Red Theme)
@@ -318,7 +345,7 @@ def main():
             </table>
         </div>
         """
-        # send_html_email("🚨 Job Failed: Critical Error", error_html)
+        send_html_email("🚨 Job Failed: Critical Error", error_html)
 
 
 if __name__ == '__main__':
