@@ -170,17 +170,30 @@ def get_mongo_collection():
 
 
 def get_or_create_subfolder(service, folder_name, parent_id):
-    query = f"name='{folder_name}' and '{parent_id}' in parents and trashed=false"
-    results = service.files().list(q=query, fields="files(id)").execute()
-    files = results.get('files', [])
-    if files:
-        return files[0]['id']
+    results = service.files().list(
+        q=f"'{parent_id}' in parents and trashed=false",
+        fields="files(id, name)"
+    ).execute()
 
+    files = results.get('files', [])
+
+    # 🔥 Case-insensitive match
+    for file in files:
+        if file['name'].lower() == folder_name.lower():
+            return file['id']
+
+    # Create if not found
     file_metadata = {
-        'name': folder_name, 'parents': [parent_id],
+        'name': folder_name,
+        'parents': [parent_id],
         'mimeType': 'application/vnd.google-apps.folder'
     }
-    folder = service.files().create(body=file_metadata, fields='id').execute()
+
+    folder = service.files().create(
+        body=file_metadata,
+        fields='id'
+    ).execute()
+
     return folder.get('id')
 
 
