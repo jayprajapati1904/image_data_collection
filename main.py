@@ -23,16 +23,20 @@ def load_animals_from_gist():
     response = requests.get(url)
 
     if response.status_code != 200:
-        raise Exception("❌ Failed to load animal list from gist")
+        raise Exception("❌ Failed to load animal list")
 
-    # Clean and split lines
-    animals = [
-        line.strip().lower()
-        for line in response.text.split("\n")
-        if line.strip()
-    ]
+    animals = []
 
-    print(f"✅ Loaded {len(animals)} animals from gist")
+    for line in response.text.split("\n"):
+        if not line.strip():
+            continue
+
+        # ✅ REMOVE NUMBER PREFIX
+        clean_name = line.split(",", 1)[-1].strip().lower()
+
+        animals.append(clean_name)
+
+    print(f"✅ Loaded {len(animals)} cleaned animals")
 
     return animals
 
@@ -66,7 +70,7 @@ IMAGES_PER_DAY = 5
 #     "butterfly", "bee", "ant", "spider", "ladybug", "grasshopper", "cricket", "dragonfly", "moth", "beetle"
 # ]  # Add your full list back here
 
-ANIMALS = load_animals_from_gist()
+# ANIMALS = load_animals_from_gist()
 
 
 # --- EMAIL STYLES (CSS) ---
