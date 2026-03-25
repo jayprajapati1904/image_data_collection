@@ -170,19 +170,29 @@ def get_mongo_collection():
 
 
 def get_or_create_subfolder(service, folder_name, parent_id):
-    results = service.files().list(
-        q=f"'{parent_id}' in parents and trashed=false",
-        fields="files(id, name)"
-    ).execute()
+    page_token = None
 
-    files = results.get('files', [])
+    while True:
+        results = service.files().list(
+            q=f"'{parent_id}' in parents and trashed=false",
+            fields="nextPageToken, files(id, name)",
+            pageToken=page_token,
+            pageSize=2000   # 🔥 get more results
+        ).execute()
 
-    # 🔥 Case-insensitive match
-    for file in files:
-        if file['name'].lower() == folder_name.lower():
-            return file['id']
+        files = results.get('files', [])
 
-    # Create if not found
+        # ✅ Case-insensitive match
+        for file in files:
+            if file['name'].lower() == folder_name.lower():
+                return file['id']
+
+        page_token = results.get('nextPageToken')
+
+        if not page_token:
+            break
+
+    # 🔥 If not found → create folder
     file_metadata = {
         'name': folder_name,
         'parents': [parent_id],
