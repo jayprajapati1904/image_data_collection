@@ -260,9 +260,6 @@ def main():
         for animal in ANIMALS:
             print(f"\n🐶 Checking: {animal}...")
             try:
-                animal_folder_id = get_or_create_subfolder(
-                    drive_service, animal.title(), drive_folder_id)
-
                 url = f"https://pixabay.com/api/?key={api_key}&q={animal}&image_type=photo&per_page={IMAGES_PER_DAY}&page={day_number}"
                 response = requests.get(url)
                 hits = response.json().get('hits', [])
@@ -270,6 +267,9 @@ def main():
                 if not hits:
                     print(f"⚠️ No images for {animal}")
                     continue
+
+                animal_folder_id = get_or_create_subfolder(
+                    drive_service, animal.title(), drive_folder_id)
 
                 for hit in hits:
                     pixabay_id = hit['id']
