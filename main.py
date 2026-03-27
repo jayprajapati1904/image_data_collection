@@ -19,7 +19,7 @@ load_dotenv()
 # =========================
 # CONFIG
 # =========================
-IMAGES_PER_DAY = 5
+IMAGES_PER_DAY = 7
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 
